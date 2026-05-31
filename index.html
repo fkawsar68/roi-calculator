@@ -6,161 +6,290 @@
     <title>SaaS ROI Calculator</title>
     <style>
         :root {
-            --bg: #fafafa;
-            --surface: #ffffff;
-            --text: #1e1b4b;
+            --bg-base: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
             --accent: #4f46e5;
-            --accent-muted: #e0e7ff;
+            --accent-hover: #4338ca;
+            --accent-light: #e0e7ff;
             --border: #e2e8f0;
-            --font: system-ui, sans-serif;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+            --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             font-family: var(--font);
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-base);
+            color: var(--text-main);
             padding: 40px 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        .calculator {
-            background-color: var(--surface);
+        .calc-card {
+            background-color: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 30px;
+            padding: 32px;
             width: 100%;
-            max-width: 500px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            max-width: 540px;
+            box-shadow: var(--shadow);
         }
 
-        h2 {
-            font-size: 1.5rem;
-            margin-bottom: 24px;
+        .calc-header {
             text-align: center;
-            color: var(--accent);
+            margin-bottom: 28px;
         }
 
-        .slider-group {
+        .calc-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        .calc-header p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .input-group {
             margin-bottom: 24px;
         }
 
         .label-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
+            align-items: center;
+            margin-bottom: 10px;
         }
 
-        input[type="range"] {
-            width: 100%;
-            accent-color: var(--accent);
-            cursor: pointer;
+        .label-row span {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .input-box-wrapper {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px 10px;
+        }
+
+        .currency-symbol {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-right: 4px;
         }
 
         .input-manual {
             width: 80px;
-            text-align: right;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 2px 5px;
+            border: none;
+            background: transparent;
             font-family: inherit;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            text-align: right;
             outline: none;
         }
 
-        .results {
-            background-color: var(--accent-muted);
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 24px;
+        /* Modern Range Input styling */
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .output-box {
+            background-color: var(--accent-light);
+            border: 1px solid rgba(79, 70, 229, 0.15);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 28px;
             text-align: center;
         }
 
-        .results-label {
-            font-size: 0.85rem;
+        .output-label {
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--accent);
-            font-weight: 700;
+            margin-bottom: 4px;
         }
 
-        .results-value {
-            font-size: 2.2rem;
-            font-weight: 800;
+        .output-val {
+            font-size: 2.5rem;
+            font-weight: 900;
             color: var(--accent);
-            margin: 5px 0;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+            border-top: 1px solid rgba(79, 70, 229, 0.1);
+            padding-top: 15px;
+            font-size: 0.8rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .detail-lbl {
+            color: var(--text-muted);
+        }
+
+        .detail-val {
+            font-weight: 700;
+            color: var(--text-main);
         }
     </style>
 </head>
 <body>
 
-    <div class="calculator">
-        <h2>SaaS ROI Calculator</h2>
-        
-        <div class="slider-group">
-            <div class="label-row">
-                <span>Average Deal Size ($)</span>
-                <input type="number" id="deal-manual" class="input-manual" value="5000" min="500" max="50000">
-            </div>
-            <input type="range" id="deal-slider" min="500" max="50000" step="500" value="5000" oninput="syncInputs('deal')">
+    <div class="calc-card">
+        <div class="calc-header">
+            <h2>SaaS ROI Calculator</h2>
+            <p>Calculate your net return on investment dynamically</p>
         </div>
 
-        <div class="slider-group">
+        <!-- INPUT 1: SOFTWARE COST -->
+        <div class="input-group">
             <div class="label-row">
-                <span>Monthly Platform Cost ($)</span>
-                <input type="number" id="cost-manual" class="input-manual" value="400" min="50" max="5000">
+                <span>Monthly Software Cost</span>
+                <div class="input-box-wrapper">
+                    <span class="currency-symbol">$</span>
+                    <input type="number" id="cost-manual" class="input-manual" value="400" min="50" max="5000">
+                </div>
             </div>
             <input type="range" id="cost-slider" min="50" max="5000" step="50" value="400" oninput="syncInputs('cost')">
         </div>
 
-        <div class="results">
-            <div class="results-label">Estimated Annual ROI</div>
-            <div class="results-value" id="roi-value">1400%</div>
-            <div style="font-size: 0.8rem; opacity: 0.8;">Based on securing at least 15 additional deals per year.</div>
+        <!-- INPUT 2: DEAL VALUE -->
+        <div class="input-group">
+            <div class="label-row">
+                <span>Average Deal Value</span>
+                <div class="input-box-wrapper">
+                    <span class="currency-symbol">$</span>
+                    <input type="number" id="deal-manual" class="input-manual" value="5000" min="500" max="50000">
+                </div>
+            </div>
+            <input type="range" id="deal-slider" min="500" max="50000" step="500" value="5000" oninput="syncInputs('deal')">
+        </div>
+
+        <!-- INPUT 3: CLOSES PER YEAR -->
+        <div class="input-group">
+            <div class="label-row">
+                <span>Additional Deals Closed / Year</span>
+                <div class="input-box-wrapper">
+                    <input type="number" id="closes-manual" class="input-manual" value="12" min="1" max="100">
+                </div>
+            </div>
+            <input type="range" id="closes-slider" min="1" max="100" step="1" value="12" oninput="syncInputs('closes')">
+        </div>
+
+        <!-- OUTPUT GRID -->
+        <div class="output-box">
+            <div class="output-label">Annual Return on Investment</div>
+            <div class="output-val" id="roi-val">1,150%</div>
+            
+            <div class="details-grid">
+                <div class="detail-item">
+                    <span class="detail-lbl">Annual Cost</span>
+                    <span class="detail-val" id="annual-cost">$4,800</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-lbl">Net Cash Return</span>
+                    <span class="detail-val" id="net-return">$55,200</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const dealSlider = document.getElementById('deal-slider');
-        const dealManual = document.getElementById('deal-manual');
         const costSlider = document.getElementById('cost-slider');
         const costManual = document.getElementById('cost-manual');
-        const roiValue = document.getElementById('roi-value');
+        const dealSlider = document.getElementById('deal-slider');
+        const dealManual = document.getElementById('deal-manual');
+        const closesSlider = document.getElementById('closes-slider');
+        const closesManual = document.getElementById('closes-manual');
+
+        const roiValueElement = document.getElementById('roi-val');
+        const annualCostElement = document.getElementById('annual-cost');
+        const netReturnElement = document.getElementById('net-return');
 
         function syncInputs(type) {
-            if (type === 'deal') {
-                dealManual.value = dealSlider.value;
-            } else {
+            if (type === 'cost') {
                 costManual.value = costSlider.value;
+            } else if (type === 'deal') {
+                dealManual.value = dealSlider.value;
+            } else if (type === 'closes') {
+                closesManual.value = closesSlider.value;
             }
             calculateROI();
         }
 
-        // Handle manual numerical updates
-        dealManual.addEventListener('input', () => {
-            dealSlider.value = dealManual.value;
-            calculateROI();
-        });
-
+        // Add manual input validation listeners
         costManual.addEventListener('input', () => {
             costSlider.value = costManual.value;
             calculateROI();
         });
+        dealManual.addEventListener('input', () => {
+            dealSlider.value = dealManual.value;
+            calculateROI();
+        });
+        closesManual.addEventListener('input', () => {
+            closesSlider.value = closesManual.value;
+            calculateROI();
+        });
 
         function calculateROI() {
-            const deal = parseFloat(dealManual.value) || 0;
-            const monthlyCost = parseFloat(costManual.value) || 1;
-            const annualCost = monthlyCost * 12;
-            
-            // Assume the software closes a baseline of 15 extra deals annually
-            const grossReturn = deal * 15;
-            const netReturn = grossReturn - annualCost;
-            const roi = (netReturn / annualCost) * 100;
+            const monthlyCost = parseFloat(costManual.value) || 0;
+            const dealValue = parseFloat(dealManual.value) || 0;
+            const additionalCloses = parseFloat(closesManual.value) || 0;
 
-            roiValue.textContent = Math.round(roi) + '%';
+            const annualCost = monthlyCost * 12;
+            const grossReturn = dealValue * additionalCloses;
+            const netReturn = grossReturn - annualCost;
+
+            let roi = 0;
+            if (annualCost > 0) {
+                roi = (netReturn / annualCost) * 100;
+            }
+
+            // Display outputs formatted with commas
+            annualCostElement.textContent = '$' + Math.round(annualCost).toLocaleString();
+            netReturnElement.textContent = '$' + Math.round(netReturn).toLocaleString();
+            roiValueElement.textContent = Math.round(roi).toLocaleString() + '%';
         }
+
+        // Initial Calculation
+        calculateROI();
     </script>
 </body>
 </html>
